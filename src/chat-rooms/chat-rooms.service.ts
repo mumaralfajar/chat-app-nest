@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateChatRoomDto } from './dto/create-chat-room.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { ChatRoom } from 'src/schemas/chat-room.schema';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 
 @Injectable()
 export class ChatRoomsService {
@@ -14,13 +14,13 @@ export class ChatRoomsService {
     return undefined;
   }
 
-  async findAll() {
+  async findOneById(id: string | ObjectId) {
+    console.log({ id });
+
     return undefined;
   }
 
-  async findOne(id: number) {
-    console.log({ id });
-
+  async findAll() {
     return undefined;
   }
 }
