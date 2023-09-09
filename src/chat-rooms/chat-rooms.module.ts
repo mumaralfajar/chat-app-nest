@@ -3,6 +3,7 @@ import { ChatRoomsService } from './chat-rooms.service';
 import { ChatRoomsController } from './chat-rooms.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ChatRoom, ChatRoomSchema } from 'src/schemas/chat-room.schema';
+import { Chat, ChatSchema } from 'src/schemas/chat.schema';
 
 @Module({
   imports: [
@@ -10,6 +11,10 @@ import { ChatRoom, ChatRoomSchema } from 'src/schemas/chat-room.schema';
       {
         name: ChatRoom.name,
         schema: ChatRoomSchema,
+      },
+      {
+        name: Chat.name,
+        schema: ChatSchema,
       },
     ]),
   ],
