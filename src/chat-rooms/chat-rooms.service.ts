@@ -22,7 +22,17 @@ export class ChatRoomsService implements OnApplicationBootstrap {
   }
 
   async findOneById(id: string | ObjectId) {
-    return await this.chatRoomModel.findById(id);
+    return await this.chatRoomModel.findById(id).populate([
+      {
+        path: 'participants',
+      },
+      {
+        path: 'chats',
+        populate: {
+          path: 'user',
+        },
+      },
+    ]);
   }
 
   async findAll() {
