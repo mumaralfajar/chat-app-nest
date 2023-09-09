@@ -6,10 +6,13 @@ import { User, UserSchema } from 'src/schemas/user.schema';
 import { MongooseConfigService } from 'src/config/mongoose.config-service';
 import { ConfigModule } from '@nestjs/config';
 import mongodbConfig from 'src/config/mongodb.config';
+import { Model } from 'mongoose';
 
 describe('UsersService', () => {
   let module: TestingModule;
   let service: UsersService;
+  let userModel: Model<User>;
+  let user: User;
 
   beforeAll(async () => {
     module = await Test.createTestingModule({
@@ -32,6 +35,17 @@ describe('UsersService', () => {
     }).compile();
 
     service = module.get<UsersService>(UsersService);
+    userModel = service.userModel;
+
+    const [_user] = await Promise.all([
+      new userModel({
+        name: 'Unit Test ' + new Date().getTime(),
+      }).save(),
+    ]);
+
+    user = _user;
+
+    // console.log({ user });
   });
 
   it('should be defined', () => {
@@ -52,6 +66,26 @@ describe('UsersService', () => {
 
       expect(user).toBeDefined();
       expect(user.name).toEqual(dto.name);
+    });
+  });
+
+  describe('findOneById', () => {
+    it('should be defined', () => {
+      expect(service.findOneById).toBeDefined();
+    });
+
+    it('should find a user by objectId', async () => {
+      const id = user._id;
+      const foundUser = await service.findOneById(id);
+      expect(foundUser).toBeDefined();
+      expect(foundUser._id).toEqual(id);
+    });
+
+    it('should find a user by string id', async () => {
+      const id = user._id;
+      const foundUser = await service.findOneById(id.toString());
+      expect(foundUser).toBeDefined();
+      expect(foundUser._id).toEqual(id);
     });
   });
 
