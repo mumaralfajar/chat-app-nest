@@ -7,6 +7,11 @@ import { Model } from 'mongoose';
 import { CreateChatRoomDto } from './dto/create-chat-room.dto';
 import { User, UserSchema } from 'src/schemas/user.schema';
 import { Chat, ChatSchema } from 'src/schemas/chat.schema';
+import {
+  generateTestChatRoomName,
+  generateTestMessage,
+  generateTestUserName,
+} from 'src/utils/test-helpers';
 
 describe('ChatRoomsService', () => {
   let module: TestingModule;
@@ -46,10 +51,10 @@ describe('ChatRoomsService', () => {
 
     const [_chatRoom, _user] = await Promise.all([
       new chatRoomModel({
-        name: 'Chat Room Test ' + new Date().getTime(),
+        name: generateTestChatRoomName(),
       }).save(),
       new userModel({
-        name: 'User Test ' + new Date().getTime(),
+        name: generateTestUserName(),
       }).save(),
     ]);
 
@@ -70,7 +75,7 @@ describe('ChatRoomsService', () => {
 
     it('should create a chat room', async () => {
       const dto = new CreateChatRoomDto();
-      dto.name = 'Chat Room Test ' + new Date().getTime();
+      dto.name = generateTestChatRoomName();
       const result = await service.create(dto);
 
       // console.log({ result });
@@ -165,7 +170,7 @@ describe('ChatRoomsService', () => {
     it('should return true', async () => {
       const userId = user._id;
       const chatRoom = await new chatRoomModel({
-        name: 'Chat Room Test ' + new Date().getTime(),
+        name: generateTestChatRoomName(),
         participants: [userId],
       }).save();
 
@@ -182,7 +187,7 @@ describe('ChatRoomsService', () => {
     it('should return false', async () => {
       const userId = user._id;
       const chatRoom = await new chatRoomModel({
-        name: 'Chat Room Test ' + new Date().getTime(),
+        name: generateTestChatRoomName(),
       }).save();
 
       const chatRoomId = chatRoom._id;
@@ -204,7 +209,7 @@ describe('ChatRoomsService', () => {
     it('should add chat to a chat room', async () => {
       const chatRoomId = chatRoom._id;
       const userId = user._id;
-      const message = 'Message Test ' + new Date().getTime();
+      const message = generateTestMessage();
 
       const result = await service.addChatToChatRoom({
         chatRoomId,
