@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { CreateChatRoomDto } from './dto/create-chat-room.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { ChatRoom } from 'src/schemas/chat-room.schema';
@@ -6,16 +6,19 @@ import { Model, ObjectId } from 'mongoose';
 import { Chat } from 'src/schemas/chat.schema';
 
 @Injectable()
-export class ChatRoomsService {
+export class ChatRoomsService implements OnApplicationBootstrap {
+  private readonly logger = new Logger(ChatRoomsService.name);
+
   constructor(
     @InjectModel(ChatRoom.name)
     private readonly chatRoomModel: Model<ChatRoom>,
+
     @InjectModel(Chat.name)
     private readonly chatModel: Model<Chat>,
   ) {}
 
   async create(createChatRoomDto: CreateChatRoomDto) {
-    return await new this.chatRoomModel(createChatRoomDto).save();
+    return await this.chatRoomModel.create(createChatRoomDto);
   }
 
   async findOneById(id: string | ObjectId) {
@@ -62,5 +65,28 @@ export class ChatRoomsService {
     return await this.chatRoomModel.findByIdAndUpdate(chatRoomId, {
       $push: { chats: chat },
     });
+  }
+
+  async onApplicationBootstrap() {
+    await this.generateChatRooms();
+  }
+
+  async generateChatRooms() {
+    const chatRooms = await this.findAll();
+
+    if (chatRooms.length === 0) {
+      for (let i = 1; i <= 5; i++) {
+        const chatRoom = await this.create({
+          name: `Chat Room ${i}`,
+        });
+
+        chatRooms.push(chatRoom);
+      }
+    }
+
+    this.logger.log(
+      `Chat Rooms generated: `,
+      chatRooms.map((chatRoom) => chatRoom.name),
+    );
   }
 }

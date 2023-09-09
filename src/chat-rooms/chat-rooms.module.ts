@@ -20,5 +20,6 @@ import { Chat, ChatSchema } from 'src/schemas/chat.schema';
   ],
   controllers: [ChatRoomsController],
   providers: [ChatRoomsService],
+  exports: [ChatRoomsService],
 })
 export class ChatRoomsModule {}
