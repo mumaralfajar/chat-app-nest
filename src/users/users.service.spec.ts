@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { MongooseModule } from '@nestjs/mongoose';
+import { MongooseModule, getModelToken } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/schemas/user.schema';
 import { Model } from 'mongoose';
 import { TestModule } from 'src/test.module';
@@ -27,11 +27,11 @@ describe('UsersService', () => {
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    userModel = service.userModel;
+    userModel = module.get<Model<User>>(getModelToken(User.name));
 
     const [_user] = await Promise.all([
       new userModel({
-        name: 'Unit Test ' + new Date().getTime(),
+        name: 'User Test ' + new Date().getTime(),
       }).save(),
     ]);
 
@@ -51,7 +51,7 @@ describe('UsersService', () => {
 
     it('should create a user', async () => {
       const dto = new CreateUserDto();
-      dto.name = 'Unit Test ' + new Date().getTime();
+      dto.name = 'User Test ' + new Date().getTime();
       const user = await service.create(dto);
 
       // console.log({ user });
