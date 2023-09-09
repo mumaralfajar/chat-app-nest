@@ -3,10 +3,8 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/schemas/user.schema';
-import { MongooseConfigService } from 'src/config/mongoose.config-service';
-import { ConfigModule } from '@nestjs/config';
 import { Model } from 'mongoose';
-import mongodbTestConfig from 'src/config/mongodb.test-config';
+import { TestModule } from 'src/test.module';
 
 describe('UsersService', () => {
   let module: TestingModule;
@@ -17,13 +15,7 @@ describe('UsersService', () => {
   beforeAll(async () => {
     module = await Test.createTestingModule({
       imports: [
-        ConfigModule.forRoot({
-          isGlobal: true,
-          load: [mongodbTestConfig],
-        }),
-        MongooseModule.forRootAsync({
-          useClass: MongooseConfigService,
-        }),
+        TestModule,
         MongooseModule.forFeature([
           {
             name: User.name,
