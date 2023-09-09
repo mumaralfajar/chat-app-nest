@@ -96,12 +96,19 @@ describe('UsersService', () => {
 
     it('should find a user by name', async () => {
       const name = user.name;
-      const foundUser = await service.findOne({ filter: { name } });
+      const foundUser = await service.findOne({ name });
 
       // console.log({ foundUser });
 
       expect(foundUser).toBeDefined();
       expect(foundUser.name).toEqual(name);
+    });
+
+    it('should not find a user', async () => {
+      const name = 'sljdf lksdjflksdj' + new Date().getTime();
+      const foundUser = await service.findOne({ name });
+
+      expect(foundUser).toBeNull();
     });
   });
 

@@ -16,7 +16,7 @@ export class UsersService {
     return await this.userModel.findById(id);
   }
 
-  async findOne({ filter }: { filter: FilterQuery<User> }): Promise<User> {
+  async findOne(filter: FilterQuery<User>): Promise<User> {
     return await this.userModel.findOne(filter);
   }
 }
