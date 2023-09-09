@@ -96,7 +96,9 @@ export class ChatRoomsService implements OnApplicationBootstrap {
       }
     }
 
-    this.logger.log(`Chat Rooms generated:`);
-    console.log(chatRooms.map((chatRoom) => chatRoom.name));
+    this.logger.log(
+      `Chat Rooms generated`,
+      chatRooms.map((chatRoom) => chatRoom.name),
+    );
   }
 }

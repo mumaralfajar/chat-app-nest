@@ -7,6 +7,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { MongooseConfigService } from './config/mongoose.config-service';
 import { UsersModule } from './users/users.module';
 import { ChatRoomsModule } from './chat-rooms/chat-rooms.module';
+import { AuthModule } from './auth/auth.module';
+
 import mongodbConfig from './config/mongodb.config';
 
 @Module({
@@ -20,6 +22,7 @@ import mongodbConfig from './config/mongodb.config';
     }),
     UsersModule,
     ChatRoomsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
