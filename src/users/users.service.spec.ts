@@ -89,6 +89,22 @@ describe('UsersService', () => {
     });
   });
 
+  describe('findOne', () => {
+    it('should be defined', () => {
+      expect(service.findOne).toBeDefined();
+    });
+
+    it('should find a user by name', async () => {
+      const name = user.name;
+      const foundUser = await service.findOne({ filter: { name } });
+
+      // console.log({ foundUser });
+
+      expect(foundUser).toBeDefined();
+      expect(foundUser.name).toEqual(name);
+    });
+  });
+
   afterAll(async () => {
     await module.close();
   });
