@@ -5,8 +5,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/schemas/user.schema';
 import { MongooseConfigService } from 'src/config/mongoose.config-service';
 import { ConfigModule } from '@nestjs/config';
-import mongodbConfig from 'src/config/mongodb.config';
 import { Model } from 'mongoose';
+import mongodbTestConfig from 'src/config/mongodb.test-config';
 
 describe('UsersService', () => {
   let module: TestingModule;
@@ -19,7 +19,7 @@ describe('UsersService', () => {
       imports: [
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [mongodbConfig],
+          load: [mongodbTestConfig],
         }),
         MongooseModule.forRootAsync({
           useClass: MongooseConfigService,
