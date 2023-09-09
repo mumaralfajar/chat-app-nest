@@ -26,7 +26,9 @@ export class ChatRoomsService implements OnApplicationBootstrap {
   }
 
   async findAll() {
-    return await this.chatRoomModel.find();
+    return await this.chatRoomModel.find().select({ _id: true, name: true }).populate({
+      path: 'participants',
+    });
   }
 
   async addParticipantToChatRoom({
