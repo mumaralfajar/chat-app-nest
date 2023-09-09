@@ -6,13 +6,16 @@ import { TestModule } from 'src/test.module';
 import { Model } from 'mongoose';
 import { CreateChatRoomDto } from './dto/create-chat-room.dto';
 import { User, UserSchema } from 'src/schemas/user.schema';
+import { Chat, ChatSchema } from 'src/schemas/chat.schema';
 
 describe('ChatRoomsService', () => {
   let module: TestingModule;
   let service: ChatRoomsService;
+
   let chatRoomModel: Model<ChatRoom>;
-  let chatRoom: ChatRoom;
   let userModel: Model<User>;
+
+  let chatRoom: ChatRoom;
   let user: User;
 
   beforeAll(async () => {
@@ -23,6 +26,10 @@ describe('ChatRoomsService', () => {
           {
             name: ChatRoom.name,
             schema: ChatRoomSchema,
+          },
+          {
+            name: Chat.name,
+            schema: ChatSchema,
           },
           {
             name: User.name,
@@ -136,7 +143,7 @@ describe('ChatRoomsService', () => {
 
       expect(result).toBeDefined();
 
-      const updatedChatRoom: ChatRoom = await chatRoomModel.findById(chatRoomId);
+      const updatedChatRoom = await chatRoomModel.findById(chatRoomId);
 
       // console.dir({ updatedChatRoom }, { depth: null });
 
@@ -186,6 +193,38 @@ describe('ChatRoomsService', () => {
       });
 
       expect(result).toBe(false);
+    });
+  });
+
+  describe('addChatToChatRoom', () => {
+    it('should be defined', () => {
+      expect(service.addChatToChatRoom).toBeDefined();
+    });
+
+    it('should add chat to a chat room', async () => {
+      const chatRoomId = chatRoom._id;
+      const userId = user._id;
+      const message = 'Message Test ' + new Date().getTime();
+
+      const result = await service.addChatToChatRoom({
+        chatRoomId,
+        userId,
+        message,
+      });
+
+      expect(result).toBeDefined();
+
+      const updatedChatRoom = await chatRoomModel.findById(chatRoomId).populate('chats');
+
+      // console.dir({ updatedChatRoom }, { depth: null });
+
+      expect(updatedChatRoom.chats).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            message,
+          }),
+        ]),
+      );
     });
   });
 
