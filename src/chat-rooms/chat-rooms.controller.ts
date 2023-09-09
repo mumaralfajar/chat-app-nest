@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param, Version } from '@nestjs/common';
 import { ChatRoomsService } from './chat-rooms.service';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ObjectId } from 'mongoose';
@@ -12,6 +12,7 @@ export class ChatRoomsController {
   @ApiOperation({
     summary: 'Get all chat rooms',
   })
+  @Version('1')
   @Get()
   async findAll() {
     return await this.chatRoomsService.findAll();
@@ -20,6 +21,7 @@ export class ChatRoomsController {
   @ApiOperation({
     summary: 'Get chat room by id',
   })
+  @Version('1')
   @ApiParam({
     name: 'id',
     required: true,
