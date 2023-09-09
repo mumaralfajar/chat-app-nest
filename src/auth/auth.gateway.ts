@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer, WsException } from '@nestjs/websockets';
+import { isValidObjectId } from 'mongoose';
 import { Server } from 'socket.io';
 import { ISocket } from 'src/types/socket.type';
 import { UsersService } from 'src/users/users.service';
@@ -15,24 +16,36 @@ export class AuthGateway {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async handleConnection(client: ISocket, ...args: any[]) {
-    // console.dir({ client, args }, { depth: 2 });
+    try {
+      // console.dir({ client, args }, { depth: 2 });
 
-    const { id: socketId } = client;
-    const { userId } = client.handshake.query;
+      const { id } = client;
+      const { userId } = client.handshake.query;
 
-    if (typeof userId !== 'string') throw new WsException('Invalid userId');
+      if (typeof userId !== 'string' || !isValidObjectId(userId)) {
+        client.disconnect();
+        throw new WsException(`Invalid userId: ${userId}`);
+      }
 
-    const user = await this.usersService.findOneById(userId);
+      const user = await this.usersService.findOneById(userId);
 
-    if (!user) throw new WsException(`User with id ${userId} not found`);
+      if (!user) {
+        client.disconnect();
+        throw new WsException(`userId ${userId} not found`);
+      }
 
-    this.logger.log(`Client Connected`, { socketId, userId });
+      client.data.user = { _id: user._id, name: user.name };
+
+      this.logger.log(`Client Connected`, { id, user: client.data.user });
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
   handleDisconnect(client: ISocket) {
-    const { id: socketId } = client;
-    const { userId } = client.handshake.query;
+    const { id } = client;
+    const { user } = client.data;
 
-    this.logger.warn(`Client Disconnected`, { socketId, userId });
+    this.logger.warn(`Client Disconnected`, { id, user });
   }
 }
