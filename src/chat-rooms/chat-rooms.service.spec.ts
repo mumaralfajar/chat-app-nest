@@ -36,6 +36,8 @@ describe('ChatRoomsService', () => {
     ]);
 
     chatRoom = _chatRoom;
+
+    // console.log({ chatRoom });
   });
 
   it('should be defined', () => {
@@ -51,6 +53,9 @@ describe('ChatRoomsService', () => {
       const dto = new CreateChatRoomDto();
       dto.name = 'Chat Room Test ' + new Date().getTime();
       const result = await service.create(dto);
+
+      // console.log({ result });
+
       expect(result).toBeDefined();
       expect(result.name).toEqual(dto.name);
     });
@@ -64,15 +69,27 @@ describe('ChatRoomsService', () => {
     it('should find a chat room by object id', async () => {
       const id = chatRoom._id;
       const result = await service.findOneById(id);
+
+      // console.log({ result });
+
       expect(result).toBeDefined();
       expect(result._id).toEqual(id);
+      expect.objectContaining({
+        ...chatRoom,
+      });
     });
 
     it('should find a chat room by string id', async () => {
       const id = chatRoom._id;
       const result = await service.findOneById(id.toString());
+
+      // console.log({ result });
+
       expect(result).toBeDefined();
       expect(result._id).toEqual(id);
+      expect.objectContaining({
+        ...chatRoom,
+      });
     });
   });
 
@@ -83,8 +100,20 @@ describe('ChatRoomsService', () => {
 
     it('should find all chat rooms', async () => {
       const result = await service.findAll();
+
+      // console.log({ result });
+
       expect(result).toBeDefined();
       expect(result.length).toBeGreaterThan(0);
+
+      /**
+       * @see https://medium.com/@andrei.pfeiffer/jest-matching-objects-in-array-50fe2f4d6b98
+       */
+      expect.arrayContaining([
+        expect.objectContaining({
+          ...chatRoom,
+        }),
+      ]);
     });
   });
 

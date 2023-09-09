@@ -9,18 +9,14 @@ export class ChatRoomsService {
   constructor(@InjectModel(ChatRoom.name) private readonly chatRoomModel: Model<ChatRoom>) {}
 
   async create(createChatRoomDto: CreateChatRoomDto) {
-    console.log({ createChatRoomDto });
-
-    return undefined;
+    return await new this.chatRoomModel(createChatRoomDto).save();
   }
 
   async findOneById(id: string | ObjectId) {
-    console.log({ id });
-
-    return undefined;
+    return await this.chatRoomModel.findById(id);
   }
 
   async findAll() {
-    return undefined;
+    return await this.chatRoomModel.find();
   }
 }
