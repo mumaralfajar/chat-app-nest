@@ -20,9 +20,9 @@ import mongodbConfig from './config/mongodb.config';
     MongooseModule.forRootAsync({
       useClass: MongooseConfigService,
     }),
+    AuthModule,
     UsersModule,
     ChatRoomsModule,
-    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
