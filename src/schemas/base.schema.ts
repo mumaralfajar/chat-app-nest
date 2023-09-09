@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
+import { ObjectId } from 'mongoose';
 
 export class Base {
   // Auto-generated fields
-  _id: mongoose.Schema.Types.ObjectId;
+  _id: ObjectId;
   __v: number;
 }
 
