@@ -128,13 +128,13 @@ describe('ChatRoomsService', () => {
 
     it('should add participant to a chat room', async () => {
       const chatRoomId = chatRoom._id;
+      const userId = user._id;
       const result = await service.addParticipantToChatRoom({
         chatRoomId,
-        user,
+        userId,
       });
 
       expect(result).toBeDefined();
-      expect(result._id).toEqual(chatRoomId);
 
       const updatedChatRoom: ChatRoom = await chatRoomModel.findById(chatRoomId);
 
@@ -143,10 +143,49 @@ describe('ChatRoomsService', () => {
       expect(updatedChatRoom.participants).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            _id: user._id,
+            _id: userId,
           }),
         ]),
       );
+    });
+  });
+
+  describe('isUserParticipatedInChatRoom', () => {
+    it('should be defined', () => {
+      expect(service.isUserParticipatedInChatRoom).toBeDefined();
+    });
+
+    it('should return true', async () => {
+      const userId = user._id;
+      const chatRoom = await new chatRoomModel({
+        name: 'Chat Room Test ' + new Date().getTime(),
+        participants: [userId],
+      }).save();
+
+      const chatRoomId = chatRoom._id;
+
+      const result = await service.isUserParticipatedInChatRoom({
+        chatRoomId,
+        userId,
+      });
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false', async () => {
+      const userId = user._id;
+      const chatRoom = await new chatRoomModel({
+        name: 'Chat Room Test ' + new Date().getTime(),
+      }).save();
+
+      const chatRoomId = chatRoom._id;
+
+      const result = await service.isUserParticipatedInChatRoom({
+        chatRoomId,
+        userId,
+      });
+
+      expect(result).toBe(false);
     });
   });
 

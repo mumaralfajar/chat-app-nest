@@ -3,11 +3,13 @@ import { CreateChatRoomDto } from './dto/create-chat-room.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { ChatRoom } from 'src/schemas/chat-room.schema';
 import { Model, ObjectId } from 'mongoose';
-import { User } from 'src/schemas/user.schema';
 
 @Injectable()
 export class ChatRoomsService {
-  constructor(@InjectModel(ChatRoom.name) private readonly chatRoomModel: Model<ChatRoom>) {}
+  constructor(
+    @InjectModel(ChatRoom.name)
+    private readonly chatRoomModel: Model<ChatRoom>,
+  ) {}
 
   async create(createChatRoomDto: CreateChatRoomDto) {
     return await new this.chatRoomModel(createChatRoomDto).save();
@@ -23,13 +25,24 @@ export class ChatRoomsService {
 
   async addParticipantToChatRoom({
     chatRoomId,
-    user,
+    userId,
   }: {
     chatRoomId: ObjectId | string;
-    user: User | ObjectId | string;
+    userId: ObjectId | string;
   }) {
     return await this.chatRoomModel.findByIdAndUpdate(chatRoomId, {
-      $push: { participants: user },
+      $push: { participants: userId },
     });
+  }
+
+  async isUserParticipatedInChatRoom({
+    chatRoomId,
+    userId,
+  }: {
+    chatRoomId: ObjectId | string;
+    userId: ObjectId | string;
+  }) {
+    const count = await this.chatRoomModel.count({ _id: chatRoomId, participants: userId });
+    return !!count;
   }
 }
