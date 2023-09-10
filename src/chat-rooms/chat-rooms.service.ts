@@ -25,20 +25,26 @@ export class ChatRoomsService implements OnApplicationBootstrap {
     return await this.chatRoomModel.findById(id).populate([
       {
         path: 'participants',
+        select: ['_id', 'name'],
       },
       {
         path: 'chats',
         populate: {
           path: 'user',
+          select: ['_id', 'name'],
         },
       },
     ]);
   }
 
   async findAll() {
-    return await this.chatRoomModel.find().select({ _id: true, name: true }).populate({
-      path: 'participants',
-    });
+    return await this.chatRoomModel
+      .find()
+      .select('-chats')
+      .populate({
+        path: 'participants',
+        select: ['_id', 'name'],
+      });
   }
 
   async addParticipantToChatRoom({
@@ -74,8 +80,13 @@ export class ChatRoomsService implements OnApplicationBootstrap {
     message: string;
   }) {
     const chat = await this.chatModel.create({ message, user: userId });
-    return await this.chatRoomModel.findByIdAndUpdate(chatRoomId, {
+    await this.chatRoomModel.findByIdAndUpdate(chatRoomId, {
       $push: { chats: chat },
+    });
+
+    return await chat.populate({
+      path: 'user',
+      select: ['_id', 'name'],
     });
   }
 

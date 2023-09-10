@@ -1,5 +1,5 @@
-import { Logger } from '@nestjs/common';
-import { WebSocketGateway, WebSocketServer, WsException } from '@nestjs/websockets';
+import { BadRequestException, Logger, NotFoundException } from '@nestjs/common';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { isValidObjectId } from 'mongoose';
 import { Server } from 'socket.io';
 import { ISocket } from 'src/types/socket.type';
@@ -24,14 +24,14 @@ export class AuthGateway {
 
       if (typeof userId !== 'string' || !isValidObjectId(userId)) {
         client.disconnect();
-        throw new WsException(`Invalid userId: ${userId}`);
+        throw new BadRequestException(`Invalid userId: ${userId}`);
       }
 
       const user = await this.usersService.findOneById(userId);
 
       if (!user) {
         client.disconnect();
-        throw new WsException(`userId ${userId} not found`);
+        throw new NotFoundException(`userId ${userId} not found`);
       }
 
       client.data.user = { _id: user._id, name: user.name };

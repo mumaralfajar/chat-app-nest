@@ -9,7 +9,7 @@ import { SOCKET_EVENT } from '../constants/socket.constant';
 import { JoinChatRoomDto } from './dto/join-chat-room.dto';
 import { SocketUser } from 'src/utils/decorators/socket-user.decorator';
 import { ISocket, TSocketUser } from 'src/types/socket.type';
-import { Logger, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Logger, UsePipes, ValidationPipe } from '@nestjs/common';
 import { SocketID } from 'src/utils/decorators/socket-id.decorator';
 import { ChatRoomsService } from './chat-rooms.service';
 import { Server } from 'socket.io';
@@ -32,12 +32,6 @@ export class ChatRoomsGateway {
     @SocketUser() user: TSocketUser,
     @MessageBody() dto: JoinChatRoomDto,
   ) {
-    // console.log({
-    //   id,
-    //   user,
-    //   dto,
-    // });
-
     const userId = user._id;
     const { chatRoomId } = dto;
 
@@ -45,8 +39,6 @@ export class ChatRoomsGateway {
       chatRoomId,
       userId,
     });
-
-    // console.log({ isAlreadyJoined });
 
     if (isAlreadyJoined) return;
 
@@ -63,8 +55,21 @@ export class ChatRoomsGateway {
     @SocketUser() user: TSocketUser,
     @MessageBody() dto: NewMessageChatRoomDto,
   ) {
+    console.log({ socketId, user, dto });
+
     const userId = user._id;
     const { chatRoomId, message } = dto;
-    console.log({ userId, chatRoomId, message });
+
+    const isParticipant = await this.chatRoomsService.isUserParticipatedInChatRoom({
+      chatRoomId,
+      userId,
+    });
+
+    if (!isParticipant) throw new BadRequestException('You are not a participant');
+
+    const chat = await this.chatRoomsService.addChatToChatRoom({ chatRoomId, userId, message });
+
+    // console.log({ chat });
+    this.server.emit(SOCKET_EVENT.BROADCAST_NEW_MESSAGE_CHAT_ROOM, { chatRoomId, chat });
   }
 }
