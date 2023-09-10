@@ -9,7 +9,7 @@ import { SOCKET_EVENT } from '../constants/socket.constant';
 import { JoinChatRoomDto } from './dto/join-chat-room.dto';
 import { SocketUser } from 'src/utils/decorators/socket-user.decorator';
 import { ISocket, TSocketUser } from 'src/types/socket.type';
-import { BadRequestException, Logger, UsePipes, ValidationPipe } from '@nestjs/common';
+import { ForbiddenException, Logger, UsePipes, ValidationPipe } from '@nestjs/common';
 import { SocketID } from 'src/utils/decorators/socket-id.decorator';
 import { ChatRoomsService } from './chat-rooms.service';
 import { Server } from 'socket.io';
@@ -32,7 +32,7 @@ export class ChatRoomsGateway {
     @SocketUser() user: TSocketUser,
     @MessageBody() dto: JoinChatRoomDto,
   ) {
-    const userId = user._id;
+    const { _id: userId, name: userName } = user;
     const { chatRoomId } = dto;
 
     const isAlreadyJoined = await this.chatRoomsService.isUserParticipatedInChatRoom({
@@ -40,11 +40,18 @@ export class ChatRoomsGateway {
       userId,
     });
 
-    if (isAlreadyJoined) return;
+    if (isAlreadyJoined) {
+      this.logger.warn(`User ${userName} already joined chat room ${chatRoomId}`);
+      return;
+    }
 
     await this.chatRoomsService.addParticipantToChatRoom({ chatRoomId, userId });
 
-    this.server.emit(SOCKET_EVENT.JOINED_CHAT_ROOM, { chatRoomId, user });
+    const event = SOCKET_EVENT.JOINED_CHAT_ROOM;
+    const payload = { chatRoomId, user };
+
+    this.server.emit(event, payload);
+    this.logger.log({ emit: event, payload });
   }
 
   @UsePipes(new ValidationPipe())
@@ -55,9 +62,9 @@ export class ChatRoomsGateway {
     @SocketUser() user: TSocketUser,
     @MessageBody() dto: NewMessageChatRoomDto,
   ) {
-    console.log({ socketId, user, dto });
+    // console.log({ socketId, user, dto });
 
-    const userId = user._id;
+    const { _id: userId, name: userName } = user;
     const { chatRoomId, message } = dto;
 
     const isParticipant = await this.chatRoomsService.isUserParticipatedInChatRoom({
@@ -65,11 +72,16 @@ export class ChatRoomsGateway {
       userId,
     });
 
-    if (!isParticipant) throw new BadRequestException('You are not a participant');
+    if (!isParticipant) {
+      throw new ForbiddenException(`User ${userName} not participant chat room ${chatRoomId}`);
+    }
 
     const chat = await this.chatRoomsService.addChatToChatRoom({ chatRoomId, userId, message });
 
-    // console.log({ chat });
-    this.server.emit(SOCKET_EVENT.BROADCAST_NEW_MESSAGE_CHAT_ROOM, { chatRoomId, chat });
+    const event = SOCKET_EVENT.NEW_MESSAGE_CHAT_ROOM;
+    const payload = { chatRoomId, chat };
+
+    this.server.emit(event, payload);
+    this.logger.log({ emit: event, payload });
   }
 }
