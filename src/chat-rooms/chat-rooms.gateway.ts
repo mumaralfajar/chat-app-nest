@@ -14,7 +14,6 @@ import { SocketID } from 'src/utils/decorators/socket-id.decorator';
 import { ChatRoomsService } from './chat-rooms.service';
 import { Server } from 'socket.io';
 import { NewMessageChatRoomDto } from './dto/new-message-chat-room.dto';
-import { validate } from 'class-validator';
 
 @WebSocketGateway()
 export class ChatRoomsGateway {
@@ -25,6 +24,7 @@ export class ChatRoomsGateway {
 
   constructor(private readonly chatRoomsService: ChatRoomsService) {}
 
+  @UsePipes(new ValidationPipe())
   @SubscribeMessage(SOCKET_EVENT.JOIN_CHAT_ROOM)
   async handleJoinChatRoom(
     @ConnectedSocket() client: ISocket,
@@ -38,8 +38,8 @@ export class ChatRoomsGateway {
     //   dto,
     // });
 
-    const chatRoomId = dto.chatRoomId;
     const userId = user._id;
+    const { chatRoomId } = dto;
 
     const isAlreadyJoined = await this.chatRoomsService.isUserParticipatedInChatRoom({
       chatRoomId,
@@ -63,14 +63,8 @@ export class ChatRoomsGateway {
     @SocketUser() user: TSocketUser,
     @MessageBody() dto: NewMessageChatRoomDto,
   ) {
-    console.log({ dto });
-    const errors = await validate(dto);
-
-    console.log({ errors });
-
     const userId = user._id;
     const { chatRoomId, message } = dto;
-
     console.log({ userId, chatRoomId, message });
   }
 }
