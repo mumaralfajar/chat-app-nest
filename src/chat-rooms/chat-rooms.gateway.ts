@@ -5,7 +5,7 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { SOCKET } from './chat-rooms.constant';
+import { SOCKET_EVENT } from '../constants/socket.constant';
 import { JoinChatRoomDto } from './dto/join-chat-room.dto';
 import { SocketUser } from 'src/utils/decorators/socket-user.decorator';
 import { ISocket, TSocketUser } from 'src/types/socket.type';
@@ -23,7 +23,7 @@ export class ChatRoomsGateway {
 
   constructor(private readonly chatRoomsService: ChatRoomsService) {}
 
-  @SubscribeMessage(SOCKET.JOIN_CHAT_ROOM)
+  @SubscribeMessage(SOCKET_EVENT.JOIN_CHAT_ROOM)
   async handleJoinChatRoom(
     @ConnectedSocket() client: ISocket,
     @SocketID() socketId: string,
@@ -50,6 +50,6 @@ export class ChatRoomsGateway {
 
     await this.chatRoomsService.addParticipantToChatRoom({ chatRoomId, userId });
 
-    this.server.emit(SOCKET.JOINED_CHAT_ROOM, { socketId, chatRoomId, userId });
+    this.server.emit(SOCKET_EVENT.JOINED_CHAT_ROOM, { chatRoomId, user });
   }
 }
