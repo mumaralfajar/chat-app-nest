@@ -1,0 +1,3 @@
+export const SOCKET_MESSAGE = {
+  JOIN_CHAT_ROOM: 'JOIN_CHAT_ROOM',
+};
