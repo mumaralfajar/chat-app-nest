@@ -1,3 +1,4 @@
-export const SOCKET_MESSAGE = {
+export const SOCKET = {
   JOIN_CHAT_ROOM: 'JOIN_CHAT_ROOM',
+  JOINED_CHAT_ROOM: 'JOINED_CHAT_ROOM',
 };
