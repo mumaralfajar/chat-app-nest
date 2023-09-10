@@ -78,7 +78,7 @@ export class ChatRoomsGateway {
 
     const chat = await this.chatRoomsService.addChatToChatRoom({ chatRoomId, userId, message });
 
-    const event = SOCKET_EVENT.NEW_MESSAGE_CHAT_ROOM;
+    const event = SOCKET_EVENT.BROADCAST_NEW_MESSAGE_CHAT_ROOM;
     const payload = { chatRoomId, chat };
 
     this.server.emit(event, payload);
