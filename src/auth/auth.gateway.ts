@@ -5,7 +5,7 @@ import { Server } from 'socket.io';
 import { ISocket } from 'src/types/socket.type';
 import { UsersService } from 'src/users/users.service';
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: true })
 export class AuthGateway {
   private readonly logger = new Logger(AuthGateway.name);
 

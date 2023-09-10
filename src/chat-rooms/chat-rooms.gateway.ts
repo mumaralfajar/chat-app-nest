@@ -15,7 +15,7 @@ import { ChatRoomsService } from './chat-rooms.service';
 import { Server } from 'socket.io';
 import { NewMessageChatRoomDto } from './dto/new-message-chat-room.dto';
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: true })
 export class ChatRoomsGateway {
   private readonly logger = new Logger(ChatRoomsGateway.name);
 
