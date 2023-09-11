@@ -4,6 +4,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ChatRoom } from 'src/schemas/chat-room.schema';
 import { Model, ObjectId } from 'mongoose';
 import { Chat } from 'src/schemas/chat.schema';
+import { User } from 'src/schemas/user.schema';
+import { faker } from '@faker-js/faker';
 
 @Injectable()
 export class ChatRoomsService implements OnApplicationBootstrap {
@@ -15,6 +17,9 @@ export class ChatRoomsService implements OnApplicationBootstrap {
 
     @InjectModel(Chat.name)
     private readonly chatModel: Model<Chat>,
+
+    @InjectModel(User.name)
+    private readonly userModel: Model<User>,
   ) {}
 
   async create(createChatRoomDto: CreateChatRoomDto) {
@@ -95,16 +100,51 @@ export class ChatRoomsService implements OnApplicationBootstrap {
   }
 
   async generateChatRooms() {
-    const chatRooms = await this.findAll();
+    let chatRooms = await this.findAll();
 
     if (chatRooms.length === 0) {
-      for (let i = 1; i <= 5; i++) {
-        const chatRoom = await this.create({
-          name: `Chat Room ${i}`,
+      const chatRoomsPromises = [];
+
+      for (let i = 1; i <= 10; i++) {
+        const usersPromises = [];
+
+        for (let j = 0; j <= i; j++) {
+          const user = this.userModel.create({
+            name: faker.person.fullName(),
+          });
+
+          usersPromises.push(user);
+        }
+
+        const users: User[] = await Promise.all(usersPromises);
+
+        // console.log({ users });
+
+        const chatsPromises = [];
+
+        for (let j = 0; j <= i; j++) {
+          const chat = this.chatModel.create({
+            message: faker.word.words(10),
+            user: users[j]._id,
+          });
+
+          chatsPromises.push(chatsPromises.push(chat));
+        }
+
+        const chats: Chat[] = await Promise.all(chatsPromises);
+
+        // console.log({ chats });
+
+        const chatRoom = this.chatRoomModel.create({
+          name: `Chat Room ${faker.person.jobType()}`,
+          participants: users,
+          chats: chats.map((chat) => chat._id).filter((chatId) => chatId),
         });
 
-        chatRooms.push(chatRoom);
+        chatRoomsPromises.push(chatRoom);
       }
+
+      chatRooms = await Promise.all(chatRoomsPromises);
     }
 
     this.logger.log(
