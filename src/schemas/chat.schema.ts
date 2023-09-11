@@ -10,7 +10,7 @@ export class Chat extends BaseWithTimestamps {
   @Prop({ required: true })
   message: string;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   user: User;
 }
 
