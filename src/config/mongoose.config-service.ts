@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { MongooseModuleOptions, MongooseOptionsFactory } from '@nestjs/mongoose';
-import mongodbConfig from './mongodb.config';
+import { mongodbConfig } from './mongodb.config';
 
 @Injectable()
 export class MongooseConfigService implements MongooseOptionsFactory {
@@ -10,14 +10,14 @@ export class MongooseConfigService implements MongooseOptionsFactory {
 
   constructor(
     @Inject(mongodbConfig.KEY)
-    private readonly mongoDBConfig: ConfigType<typeof mongodbConfig>,
+    private readonly mongoConfig: ConfigType<typeof mongodbConfig>,
   ) {
     const mongodb = 'mongodb://';
-    const host = this.mongoDBConfig.host;
-    const port = this.mongoDBConfig.port;
-    const user = this.mongoDBConfig.user;
-    const password = this.mongoDBConfig.password;
-    const database = this.mongoDBConfig.database;
+    const host = this.mongoConfig.host;
+    const port = this.mongoConfig.port;
+    const user = this.mongoConfig.user;
+    const password = this.mongoConfig.password;
+    const database = this.mongoConfig.database;
 
     // console.log({ mongodb, host, port, user, password, database });
 
