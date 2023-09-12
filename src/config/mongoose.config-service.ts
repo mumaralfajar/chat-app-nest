@@ -12,12 +12,21 @@ export class MongooseConfigService implements MongooseOptionsFactory {
     @Inject(mongodbConfig.KEY)
     private readonly mongoDBConfig: ConfigType<typeof mongodbConfig>,
   ) {
+    const mongodb = 'mongodb://';
     const host = this.mongoDBConfig.host;
     const port = this.mongoDBConfig.port;
+    const user = this.mongoDBConfig.user;
+    const password = this.mongoDBConfig.password;
     const database = this.mongoDBConfig.database;
-    // console.log({ host, port, database });
 
-    this.uri = `mongodb://${host}:${port}/${database}`;
+    // console.log({ mongodb, host, port, user, password, database });
+
+    if (user && password) {
+      this.uri = `${mongodb}${user}:${password}@${host}:${port}/${database}`;
+      return;
+    }
+
+    this.uri = `${mongodb}${host}:${port}/${database}`;
   }
 
   createMongooseOptions(): MongooseModuleOptions {
