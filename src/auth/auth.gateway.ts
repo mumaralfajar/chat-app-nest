@@ -1,12 +1,17 @@
 import { BadRequestException, Logger, NotFoundException } from '@nestjs/common';
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import {
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
 import { isValidObjectId } from 'mongoose';
 import { Server } from 'socket.io';
 import { ISocket } from 'src/types/socket.type';
 import { UsersService } from 'src/users/users.service';
 
 @WebSocketGateway({ cors: true })
-export class AuthGateway {
+export class AuthGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(AuthGateway.name);
 
   @WebSocketServer()
