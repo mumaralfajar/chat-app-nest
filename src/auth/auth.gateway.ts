@@ -47,7 +47,7 @@ export class AuthGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
       client.data.user = { _id: user._id, name: user.name };
 
-      this.logger.log(`Client Connected`, { id, user: client.data.user });
+      this.logger.log(`Client connected`, { id, user: client.data.user });
     } catch (error) {
       this.logger.error(error);
     }
@@ -57,6 +57,6 @@ export class AuthGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
     const { id } = client;
     const { user } = client.data;
 
-    this.logger.warn(`Client Disconnected`, { id, user });
+    this.logger.warn(`Client disconnected`, { id, user });
   }
 }

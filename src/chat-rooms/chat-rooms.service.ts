@@ -148,7 +148,7 @@ export class ChatRoomsService implements OnApplicationBootstrap {
     }
 
     this.logger.log(
-      `Chat Rooms generated`,
+      `ChatRooms generated`,
       chatRooms.map((chatRoom) => chatRoom.name),
     );
   }
