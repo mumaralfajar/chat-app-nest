@@ -7,11 +7,11 @@ import {
 import { isValidObjectId } from 'mongoose';
 
 /**
- * Validate time format
+ * Validate objectId
  *
  * @see https://github.com/typestack/class-validator#custom-validation-classes
  */
-@ValidatorConstraint({ name: 'timeFormat', async: false })
+@ValidatorConstraint({ name: 'validObjectId', async: false })
 export class ValidObjectId implements ValidatorConstraintInterface {
   validate(value: string, args: ValidationArguments) {
     return isValidObjectId(value);
