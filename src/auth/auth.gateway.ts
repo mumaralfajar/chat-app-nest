@@ -2,6 +2,7 @@ import { BadRequestException, Logger, NotFoundException } from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
+  OnGatewayInit,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
@@ -11,13 +12,18 @@ import { ISocket } from 'src/types/socket.type';
 import { UsersService } from 'src/users/users.service';
 
 @WebSocketGateway({ cors: true })
-export class AuthGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class AuthGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger = new Logger(AuthGateway.name);
 
   @WebSocketServer()
   server: Server;
 
   constructor(private readonly usersService: UsersService) {}
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  afterInit(server: Server) {
+    this.logger.log(`${AuthGateway.name} initialized`);
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async handleConnection(client: ISocket, ...args: any[]) {

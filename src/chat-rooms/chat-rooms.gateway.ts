@@ -1,6 +1,7 @@
 import {
   ConnectedSocket,
   MessageBody,
+  OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -16,13 +17,18 @@ import { Server } from 'socket.io';
 import { NewMessageChatRoomDto } from './dto/new-message-chat-room.dto';
 
 @WebSocketGateway({ cors: true })
-export class ChatRoomsGateway {
+export class ChatRoomsGateway implements OnGatewayInit {
   private readonly logger = new Logger(ChatRoomsGateway.name);
 
   @WebSocketServer()
   server: Server;
 
   constructor(private readonly chatRoomsService: ChatRoomsService) {}
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  afterInit(server: Server) {
+    this.logger.log(`${ChatRoomsGateway.name} initialized`);
+  }
 
   @UsePipes(new ValidationPipe())
   @SubscribeMessage(SOCKET_EVENT.JOIN_CHAT_ROOM)
