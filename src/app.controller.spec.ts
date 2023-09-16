@@ -1,12 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { TestModule } from './test.module';
 
 describe('AppController', () => {
+  let app: TestingModule;
   let appController: AppController;
 
-  beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
+  beforeAll(async () => {
+    app = await Test.createTestingModule({
+      imports: [TestModule],
       controllers: [AppController],
       providers: [AppService],
     }).compile();
@@ -18,5 +21,9 @@ describe('AppController', () => {
     it('should be defined', () => {
       expect(appController.getHello()).toBeDefined();
     });
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 });

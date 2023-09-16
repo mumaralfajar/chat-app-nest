@@ -3,12 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MongooseConfigService } from './config/mongoose.config-service';
 import { mongodbTestConfig } from './config/mongodb.config';
+import configuration from './config/configuration';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [mongodbTestConfig],
+      load: [configuration, mongodbTestConfig],
     }),
     MongooseModule.forRootAsync({
       useClass: MongooseConfigService,
