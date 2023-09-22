@@ -19,6 +19,7 @@ describe('ChatRoomsService', () => {
 
   let chatRoomModel: Model<ChatRoom>;
   let userModel: Model<User>;
+  let chatModel: Model<Chat>;
 
   let chatRoom: ChatRoom;
   let user: User;
@@ -40,6 +41,10 @@ describe('ChatRoomsService', () => {
             name: User.name,
             schema: UserSchema,
           },
+          {
+            name: Chat.name,
+            schema: ChatSchema,
+          },
         ]),
       ],
       providers: [ChatRoomsService],
@@ -48,6 +53,7 @@ describe('ChatRoomsService', () => {
     service = module.get<ChatRoomsService>(ChatRoomsService);
     chatRoomModel = module.get<Model<ChatRoom>>(getModelToken(ChatRoom.name));
     userModel = module.get<Model<User>>(getModelToken(User.name));
+    chatModel = module.get<Model<Chat>>(getModelToken(Chat.name));
 
     const [_chatRoom, _user] = await Promise.all([
       new chatRoomModel({
@@ -230,6 +236,42 @@ describe('ChatRoomsService', () => {
           }),
         ]),
       );
+    });
+  });
+
+  describe('isChatBelongsToUser', () => {
+    it('should be defined', () => {
+      expect(service.isChatBelongsToUser).toBeDefined();
+    });
+
+    it('should return true', async () => {
+      const chat = await new chatModel({
+        message: generateTestMessage(),
+        user: user,
+      }).save();
+
+      const result = await service.isChatBelongsToUser({
+        chatId: chat._id,
+        userId: user._id,
+      });
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false', async () => {
+      const chat = await new chatModel({
+        message: generateTestMessage(),
+        user: new userModel({
+          name: generateTestUserName(),
+        }),
+      }).save();
+
+      const result = await service.isChatBelongsToUser({
+        chatId: chat._id,
+        userId: user._id,
+      });
+
+      expect(result).toBe(false);
     });
   });
 
