@@ -15,6 +15,7 @@ import { SocketID } from 'src/utils/decorators/socket-id.decorator';
 import { ChatRoomsService } from './chat-rooms.service';
 import { Server } from 'socket.io';
 import { NewMessageChatRoomDto } from './dto/new-message-chat-room.dto';
+import { DeleteMessageChatRoomDto } from './dto/delete-message-chat-room.dto';
 
 @WebSocketGateway({ cors: true })
 export class ChatRoomsGateway implements OnGatewayInit {
@@ -89,5 +90,25 @@ export class ChatRoomsGateway implements OnGatewayInit {
 
     this.server.emit(event, payload);
     this.logger.log({ emit: event, payload });
+  }
+
+  @UsePipes(new ValidationPipe())
+  @SubscribeMessage(SOCKET_EVENT.DELETE_MESSAGE_CHAT_ROOM)
+  async handleDeleteMessage(
+    @ConnectedSocket() client: ISocket,
+    @SocketID() socketId: string,
+    @SocketUser() user: TSocketUser,
+    @MessageBody() dto: DeleteMessageChatRoomDto,
+  ) {
+    const { _id: userId, name: userName } = user;
+    const { chatId } = dto;
+
+    const isChatBelongsToUser = await this.chatRoomsService.isChatBelongsToUser({ chatId, userId });
+
+    if (!isChatBelongsToUser) {
+      throw new ForbiddenException(`This chat not belongs to user ${userName}`);
+    }
+
+    await this.chatRoomsService.deleteChat(chatId);
   }
 }

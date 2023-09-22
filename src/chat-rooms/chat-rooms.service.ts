@@ -152,4 +152,19 @@ export class ChatRoomsService implements OnApplicationBootstrap {
       chatRooms.map((chatRoom) => chatRoom.name),
     );
   }
+
+  async isChatBelongsToUser({
+    chatId,
+    userId,
+  }: {
+    chatId: ObjectId | string;
+    userId: ObjectId | string;
+  }) {
+    const chat = await this.chatModel.findOne({ _id: chatId, user: userId });
+    return !!chat;
+  }
+
+  async deleteChat(chatId: ObjectId | string) {
+    await this.chatModel.deleteOne({ _id: chatId });
+  }
 }
