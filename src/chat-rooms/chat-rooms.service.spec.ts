@@ -247,7 +247,7 @@ describe('ChatRoomsService', () => {
     it('should return true', async () => {
       const chat = await new chatModel({
         message: generateTestMessage(),
-        user: user,
+        user,
       }).save();
 
       const result = await service.isChatBelongsToUser({

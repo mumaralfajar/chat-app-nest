@@ -160,7 +160,7 @@ export class ChatRoomsService implements OnApplicationBootstrap {
     chatId: ObjectId | string;
     userId: ObjectId | string;
   }) {
-    const chat = await this.chatModel.findOne({ _id: chatId, user: userId });
+    const chat = await this.chatModel.count({ _id: chatId, user: userId });
     return !!chat;
   }
 
