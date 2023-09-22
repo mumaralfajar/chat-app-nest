@@ -275,6 +275,27 @@ describe('ChatRoomsService', () => {
     });
   });
 
+  describe('deleteChat', () => {
+    it('should be defined', () => {
+      expect(service.deleteChat).toBeDefined();
+    });
+
+    it('should delete a chat', async () => {
+      const chat = await new chatModel({
+        message: generateTestMessage(),
+        user,
+      }).save();
+
+      const result = await service.deleteChat(chat._id);
+
+      expect(result).toBeDefined();
+      expect(result._id).toEqual(chat._id);
+
+      const findDeletedChat = await chatModel.findById(chat._id);
+      expect(findDeletedChat).toBeNull();
+    });
+  });
+
   afterAll(async () => {
     await module.close();
   });
