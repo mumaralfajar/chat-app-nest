@@ -101,7 +101,7 @@ export class ChatRoomsGateway implements OnGatewayInit {
     @MessageBody() dto: DeleteMessageChatRoomDto,
   ) {
     const { _id: userId, name: userName } = user;
-    const { chatId } = dto;
+    const { chatRoomId, chatId } = dto;
 
     const isChatBelongsToUser = await this.chatRoomsService.isChatBelongsToUser({ chatId, userId });
 
@@ -109,6 +109,15 @@ export class ChatRoomsGateway implements OnGatewayInit {
       throw new ForbiddenException(`This chat not belongs to user ${userName}`);
     }
 
-    await this.chatRoomsService.deleteChat(chatId);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const deletedChat = await this.chatRoomsService.deleteChat(chatId);
+
+    // console.log({ deletedChat });
+
+    const event = SOCKET_EVENT.DELETED_MESSAGE_CHAT_ROOM;
+    const payload = { chatRoomId, chatId };
+
+    this.server.emit(event, payload);
+    this.logger.log({ emit: event, payload });
   }
 }

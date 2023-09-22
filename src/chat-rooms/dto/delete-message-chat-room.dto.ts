@@ -5,5 +5,10 @@ export class DeleteMessageChatRoomDto {
   @IsNotEmpty()
   @IsString()
   @Validate(ValidObjectId)
+  chatRoomId: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Validate(ValidObjectId)
   chatId: string;
 }

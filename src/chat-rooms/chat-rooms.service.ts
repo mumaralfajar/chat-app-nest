@@ -165,6 +165,6 @@ export class ChatRoomsService implements OnApplicationBootstrap {
   }
 
   async deleteChat(chatId: ObjectId | string) {
-    await this.chatModel.deleteOne({ _id: chatId });
+    return await this.chatModel.findOneAndDelete({ _id: chatId });
   }
 }
