@@ -160,8 +160,8 @@ export class ChatRoomsService implements OnApplicationBootstrap {
     chatId: ObjectId | string;
     userId: ObjectId | string;
   }) {
-    const chat = await this.chatModel.count({ _id: chatId, user: userId });
-    return !!chat;
+    const count = await this.chatModel.count({ _id: chatId, user: userId });
+    return !!count;
   }
 
   async deleteChat(chatId: ObjectId | string) {
