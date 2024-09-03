@@ -118,8 +118,6 @@ export class ChatRoomsService implements OnApplicationBootstrap {
 
         const users: User[] = await Promise.all(usersPromises);
 
-        // console.log({ users });
-
         const chatsPromises = [];
 
         for (let j = 0; j <= i; j++) {
@@ -132,8 +130,6 @@ export class ChatRoomsService implements OnApplicationBootstrap {
         }
 
         const chats: Chat[] = await Promise.all(chatsPromises);
-
-        // console.log({ chats });
 
         const chatRoom = this.chatRoomModel.create({
           name: `Chat Room ${faker.person.jobType()}`,

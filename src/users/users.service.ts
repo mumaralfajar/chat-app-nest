@@ -13,10 +13,10 @@ export class UsersService {
   }
 
   async findOneById(id: string | ObjectId): Promise<User> {
-    return await this.userModel.findById(id);
+    return this.userModel.findById(id);
   }
 
   async findOne(filter: FilterQuery<User>): Promise<User> {
-    return await this.userModel.findOne(filter);
+    return this.userModel.findOne(filter);
   }
 }

@@ -28,8 +28,6 @@ export class AuthGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async handleConnection(client: ISocket, ...args: any[]) {
     try {
-      // console.dir({ client, args }, { depth: 2 });
-
       const { id } = client;
       const { userId } = client.handshake.query;
 
