@@ -69,8 +69,6 @@ export class ChatRoomsGateway implements OnGatewayInit {
     @SocketUser() user: TSocketUser,
     @MessageBody() dto: NewMessageChatRoomDto,
   ) {
-    // console.log({ socketId, user, dto });
-
     const { _id: userId, name: userName } = user;
     const { chatRoomId, message } = dto;
 
@@ -110,9 +108,7 @@ export class ChatRoomsGateway implements OnGatewayInit {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const deletedChat = await this.chatRoomsService.deleteChat(chatId);
-
-    // console.log({ deletedChat });
+    await this.chatRoomsService.deleteChat(chatId);
 
     const event = SOCKET_EVENT.DELETED_MESSAGE_CHAT_ROOM;
     const payload = { chatRoomId, chatId };
