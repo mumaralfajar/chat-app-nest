@@ -22,11 +22,6 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Useful Links
-
-- Checkout setup & demo's video on [youtube](https://youtu.be/3FZgNjK5Jtg?si=RO2r1KqdQl8S9Vs8).
-- Checkout the frontend repository on [github](https://github.com/budimanfajarf/chat-app-frontend).
-
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
