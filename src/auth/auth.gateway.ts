@@ -20,12 +20,10 @@ export class AuthGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
   constructor(private readonly usersService: UsersService) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   afterInit(server: Server) {
     this.logger.log(`${AuthGateway.name} initialized`);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async handleConnection(client: ISocket, ...args: any[]) {
     try {
       const { id } = client;

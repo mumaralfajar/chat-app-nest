@@ -26,7 +26,7 @@ export class ChatRoomsGateway implements OnGatewayInit {
 
   constructor(private readonly chatRoomsService: ChatRoomsService) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   afterInit(server: Server) {
     this.logger.log(`${ChatRoomsGateway.name} initialized`);
   }
@@ -107,7 +107,6 @@ export class ChatRoomsGateway implements OnGatewayInit {
       throw new ForbiddenException(`This chat not belongs to user ${userName}`);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     await this.chatRoomsService.deleteChat(chatId);
 
     const event = SOCKET_EVENT.DELETED_MESSAGE_CHAT_ROOM;
