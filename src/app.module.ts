@@ -16,6 +16,7 @@ import { HttpLoggerMiddleware } from './utils/middlewares/http-logger.middleware
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration, mongodbConfig],
+      envFilePath: '.env',
     }),
     MongooseModule.forRootAsync({
       useClass: MongooseConfigService,

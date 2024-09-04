@@ -8,6 +8,12 @@ export type UserDocument = HydratedDocument<User>;
 export class User extends BaseWithTimestamps {
   @Prop({ required: true })
   name: string;
+
+  @Prop({ required: true, unique: true })
+  email: string;
+
+  @Prop({ required: true })
+  password: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

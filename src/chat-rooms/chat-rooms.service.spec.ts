@@ -9,7 +9,7 @@ import { User, UserSchema } from 'src/schemas/user.schema';
 import { Chat, ChatSchema } from 'src/schemas/chat.schema';
 import {
   generateTestChatRoomName,
-  generateTestMessage,
+  generateTestMessage, generateTestPassword,
   generateTestUserName,
 } from 'src/utils/test-helpers';
 
@@ -61,6 +61,8 @@ describe('ChatRoomsService', () => {
       }).save(),
       new userModel({
         name: generateTestUserName(),
+        email: 'johndoe@example.com',
+        password: generateTestPassword()
       }).save(),
     ]);
 
@@ -263,6 +265,8 @@ describe('ChatRoomsService', () => {
         message: generateTestMessage(),
         user: new userModel({
           name: generateTestUserName(),
+          email: 'johndoe@example.com',
+          password: generateTestPassword(),
         }),
       }).save();
 

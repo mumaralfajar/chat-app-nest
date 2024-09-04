@@ -1,14 +1,54 @@
-import { Injectable } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcryptjs';
 import { LoginDto } from './dto/login.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from '../schemas/user.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    @InjectModel(User.name)
+    private userModel: Model<User>,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  async login({ name }: LoginDto) {
-    let user = await this.usersService.findOne({ name });
-    if (!user) user = await this.usersService.create({ name });
-    return user;
+  async validateUser(email: string, pass: string): Promise<any> {
+    const user = await this.userModel.findOne({ email });
+    if (user && (await bcrypt.compare(pass, user.password))) {
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
+  }
+
+  async login(loginDto: LoginDto) {
+    const user = await this.validateUser(loginDto.email, loginDto.password);
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    const payload = {  sub: user._id, name: user.name, email: user.email, };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+
+  async register(createUserDto: CreateUserDto) {
+    const existingUser = await this.userModel.findOne({ email: createUserDto.email });
+    if (existingUser) {
+      throw new ConflictException('User with this email already exists');
+    }
+
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
+
+    const user = await this.userModel.create({
+      ...createUserDto,
+      password: hashedPassword,
+    });
+
+    return { user }
   }
 }

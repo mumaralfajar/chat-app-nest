@@ -1,11 +1,14 @@
-import { Controller, Get, NotFoundException, Param, Version } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param, UseGuards, Version } from '@nestjs/common';
 import { ChatRoomsService } from './chat-rooms.service';
-import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { ObjectId } from 'mongoose';
 import { ObjectIdPipe } from 'src/utils/pipes/object-id.pipe';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Chat Room')
 @Controller('chat-rooms')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
 export class ChatRoomsController {
   constructor(private readonly chatRoomsService: ChatRoomsService) {}
 

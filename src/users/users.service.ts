@@ -1,22 +1,35 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from 'src/schemas/user.schema';
-import { FilterQuery, Model, ObjectId } from 'mongoose';
+import { Model } from 'mongoose';
+import { User, UserDocument } from '../schemas/user.schema';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
+  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+
+  async findOne(filter: Partial<User>): Promise<UserDocument | null> {
+    const user = await this.userModel.findOne(filter as any).exec();
+    if (!user) {
+      return null;
+    }
+    return user;
+  }
+
+  async findOneById(userId: string): Promise<User> {
+    const user = await this.userModel.findById(userId);
+    if (!user) {
+      throw new NotFoundException(`User with id ${userId} not found`);
+    }
+    return user;
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    return this.userModel.findOne({ email }).exec();
+  }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    return await new this.userModel(createUserDto).save();
-  }
-
-  async findOneById(id: string | ObjectId): Promise<User> {
-    return this.userModel.findById(id);
-  }
-
-  async findOne(filter: FilterQuery<User>): Promise<User> {
-    return this.userModel.findOne(filter);
+    const createdUser = new this.userModel(createUserDto);
+    return createdUser.save();
   }
 }

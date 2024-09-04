@@ -1,7 +1,8 @@
-import { Body, Controller, Post, Version } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { LoginDto } from './dto/login.dto';
+import { Controller, Post, Body, Version } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { LoginDto } from './dto/login.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -10,11 +11,19 @@ export class AuthController {
 
   @ApiOperation({
     summary: 'Login',
-    description: 'Simple login to get user data',
   })
   @Version('1')
   @Post('login')
-  async login(@Body() dto: LoginDto) {
-    return await this.authService.login(dto);
+  async login(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto);
+  }
+
+  @ApiOperation({
+    summary: 'Register',
+  })
+  @Version('1')
+  @Post('register')
+  async register(@Body() createUserDto: CreateUserDto) {
+    return this.authService.register(createUserDto);
   }
 }

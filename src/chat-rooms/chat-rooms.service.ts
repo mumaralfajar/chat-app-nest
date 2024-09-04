@@ -27,7 +27,7 @@ export class ChatRoomsService implements OnApplicationBootstrap {
   }
 
   async findOneById(id: string | ObjectId) {
-    return await this.chatRoomModel.findById(id).populate([
+    return this.chatRoomModel.findById(id).populate([
       {
         path: 'participants',
         select: ['_id', 'name'],
@@ -43,7 +43,7 @@ export class ChatRoomsService implements OnApplicationBootstrap {
   }
 
   async findAll() {
-    return await this.chatRoomModel
+    return this.chatRoomModel
       .find()
       .select('-chats')
       .populate({
@@ -59,7 +59,7 @@ export class ChatRoomsService implements OnApplicationBootstrap {
     chatRoomId: ObjectId | string;
     userId: ObjectId | string;
   }) {
-    return await this.chatRoomModel.findByIdAndUpdate(chatRoomId, {
+    return this.chatRoomModel.findByIdAndUpdate(chatRoomId, {
       $push: { participants: userId },
     });
   }
@@ -111,6 +111,8 @@ export class ChatRoomsService implements OnApplicationBootstrap {
         for (let j = 0; j <= i; j++) {
           const user = this.userModel.create({
             name: faker.person.fullName(),
+            email: faker.internet.email(),
+            password: faker.internet.password(),
           });
 
           usersPromises.push(user);
@@ -161,6 +163,6 @@ export class ChatRoomsService implements OnApplicationBootstrap {
   }
 
   async deleteChat(chatId: ObjectId | string) {
-    return await this.chatModel.findOneAndDelete({ _id: chatId });
+    return this.chatModel.findOneAndDelete({ _id: chatId });
   }
 }
