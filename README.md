@@ -24,7 +24,8 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+A backend of chat app, build with [Nest](https://github.com/nestjs/nest) framework and TypeScript.
+Also check this out: [chat app - frontend](https://github.com/mumaralfajar/chat-app-next.git).
 
 ## Environment
 
