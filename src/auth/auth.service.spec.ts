@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { getModelToken } from '@nestjs/mongoose';
 import { User } from '../schemas/user.schema';
 import { Model } from 'mongoose';
-import { CreateUserDto } from '../users/dto/create-user.dto';
+import { RegisterDto } from './dto/register.dto';
 import { generateTestPassword } from '../utils/test-helpers';
 import * as bcrypt from 'bcryptjs';
 
@@ -54,7 +54,7 @@ describe('AuthService', () => {
 
   describe('register', () => {
     it('should create a user and return the user data', async () => {
-      const createUserDto: CreateUserDto = {
+      const createUserDto: RegisterDto = {
         name: 'John Doe',
         email: 'johndoe@example.com',
         password: generateTestPassword(),

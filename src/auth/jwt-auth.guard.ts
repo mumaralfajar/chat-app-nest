@@ -14,6 +14,7 @@ export class JwtAuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
+      console.log('No token found');
       throw new UnauthorizedException();
     }
 
@@ -31,7 +32,17 @@ export class JwtAuthGuard implements CanActivate {
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    const authorizationHeader = request.headers.authorization;
+    if (!authorizationHeader) {
+      console.log('Authorization header is missing');
+      return undefined;
+    }
+
+    console.log('Authorization header received:', authorizationHeader);
+    const [type, token] = authorizationHeader.split(' ');
+    if (type !== 'Bearer') {
+      console.log('Authorization type is not Bearer:', type);
+    }
     return type === 'Bearer' ? token : undefined;
   }
 }
