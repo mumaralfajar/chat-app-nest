@@ -32,7 +32,6 @@ export class AuthService {
 
     const payload = {
       id: user._doc ? user._doc._id.toString() : user._id.toString(),
-      name: user._doc ? user._doc.name : user.name,
       email: user._doc ? user._doc.email : user.email,
     };
 
